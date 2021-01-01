@@ -1,0 +1,2 @@
+# run this after environment is activated
+conda install -c r rstudio

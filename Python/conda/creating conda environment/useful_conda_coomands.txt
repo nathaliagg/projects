@@ -1,0 +1,17 @@
+# create a new environment from yml
+conda env create -f environment.yml
+
+# activate the environment
+conda activate my_env
+
+# deactivate the environment
+conda deactivate
+
+# list all conda environment created
+conda env list
+
+# remove an environment
+conda env remove --name my_env
+
+# install a package using pip
+pip install <PackageName>s

@@ -1,0 +1,7 @@
+name: basic
+dependencies:
+  - python>=3.8
+  - numpy
+  - pandas
+  - r-base
+  - r-essentials
