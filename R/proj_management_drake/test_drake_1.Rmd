@@ -1,0 +1,127 @@
+---
+title: "Testing drake"
+author: "Nathalia Graf-Grachet"
+date: "1/5/2021"
+output: html_document
+---
+
+I am following the directions from the `drake`'s [github repo](https://github.com/ropensci/drake).
+
+
+## 1 - Load packages
+
+
+```{r}
+library(drake)
+library(tidyverse)
+```
+
+
+## 2 - Custom function
+
+
+```{r}
+create_boxplot <- function(data, x_axis, y_axis, type_color) {
+  ggplot(data) +
+    geom_boxplot(aes(x = x_axis, y = y_axis, fill = type_color), show.legend = FALSE) +
+    scale_fill_brewer(palette = "Set2") +
+    theme_light(10)
+}
+```
+
+
+## 3 - Make a plan
+
+
+```{r}
+analysis_plan <- drake_plan(
+    PlantGrowth = read.csv("PlantGrowth.csv"),
+    fig_boxplot = create_boxplot(PlantGrowth, PlantGrowth$group, PlantGrowth$weight, PlantGrowth$group)
+)
+```
+
+```{r}
+analysis_plan
+```
+
+
+The code above was just to set stage. 
+
+
+## 4 - Let `drake` manage the analysis
+
+
+```{r}
+make(analysis_plan)
+```
+
+
+## 5 - Check the analysis
+
+
+```{r}
+readd(fig_boxplot)
+```
+
+
+## 6 - Make a modification
+
+
+The original function to `create_boxplot()` is:
+```
+create_boxplot <- function(data, x_axis, y_axis, type_color) {
+  ggplot(data) +
+    geom_boxplot(aes(x = x_axis, y = y_axis, fill = type_color), show.legend = FALSE) +
+    theme_light(10)
+}
+```
+
+I want to go alter the color palette. So, I can go back to that code and add the palette I want like so (re-run the function):
+
+```
+create_boxplot <- function(data, x_axis, y_axis, type_color) {
+  ggplot(data) +
+    geom_boxplot(aes(x = x_axis, y = y_axis, fill = type_color), show.legend = FALSE) +
+    scale_fill_brewer(palette = "Set2") +
+    theme_light(10)
+}
+```
+
+
+## 7 - Check `drake` provenance
+
+
+Before re-running everything, check `drake`'s provenance:
+
+
+```{r}
+config = drake_config(analysis_plan)
+vis_drake_graph(analysis_plan)
+```
+
+
+It will show what's outdated. In this case, `fig_boxplot` is outdated. To update the `analysis_plan`:
+
+
+```{r}
+make(analysis_plan)
+```
+
+
+Check the boxplot:
+
+
+```{r}
+readd(fig_boxplot)
+```
+
+
+Good. What about the `analysis_plan`?
+
+
+```{r}
+vis_drake_graph(analysis_plan)
+```
+
+
+Updated!
